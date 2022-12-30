@@ -6,7 +6,7 @@
                 :key="tabIndex" :class="{ active: tab.active }" @click="active_tab(tabIndex)">
                 <label for="">{{ tab.label }}</label>
                 <button class="button-x right-0 flex items-baseline justify-center rounded"
-                    @click="on_tab_close(tabIndex)">x</button>
+                    @click="on_tab_close(tabIndex)" v-if="!tab.buttonClosedHide">x</button>
             </div>
         </div>
         <div class="content-active w-full h-full">
@@ -24,8 +24,8 @@ import { ref, provide } from 'vue';
 let tabs = ref([]);
 let activeTabIndex = ref(0);
 
-provide('add_tab', (label, active = false) => {
-    return tabs.value.push({ label: label, active: active })
+provide('add_tab', (label, active = false, buttonClosedHide = false) => {
+    return tabs.value.push({ label: label, active: active, buttonClosedHide:buttonClosedHide})
 })
 
 provide('tab_get_active', activeTabIndex)
@@ -37,9 +37,11 @@ function active_tab(i) {
 }
 
 function on_tab_close(i) {
+    tabs.value[i].active = false
     tabs.value.splice(i, 1)
+    
     const index = (i - 1)
-    active_tab( index.max(index, 0) )
+    active_tab( Math.max(index, 0) )
 }
 
 </script>
